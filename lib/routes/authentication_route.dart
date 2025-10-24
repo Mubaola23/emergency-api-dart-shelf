@@ -127,7 +127,6 @@ class AuthRoute {
         final hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         // Generate a 6-digit random token for verification.
         final token = (100000 + Random().nextInt(900000)).toString();
-
         // Create new user record
         final newUser = AuthenticationTableCompanion(
             id: Value(DateTime.now().millisecondsSinceEpoch),
