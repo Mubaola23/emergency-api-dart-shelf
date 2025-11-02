@@ -11,7 +11,7 @@ part 'authentication_database.g.dart';
 //         tokenExpiry: DateTime.now().add(const Duration(minutes: 15)),
 
 class AuthenticationTable extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  TextColumn get id => text()();
   TextColumn get firstName => text()();
   RealColumn get latitude => real()();
   RealColumn get longitude => real()();

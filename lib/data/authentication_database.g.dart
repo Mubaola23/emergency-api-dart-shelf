@@ -11,13 +11,9 @@ class $AuthenticationTableTable extends AuthenticationTable
   $AuthenticationTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _firstNameMeta =
       const VerificationMeta('firstName');
   @override
@@ -130,6 +126,8 @@ class $AuthenticationTableTable extends AuthenticationTable
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('first_name')) {
       context.handle(_firstNameMeta,
@@ -219,14 +217,14 @@ class $AuthenticationTableTable extends AuthenticationTable
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   AuthenticationTableData map(Map<String, dynamic> data,
       {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AuthenticationTableData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       firstName: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}first_name'])!,
       latitude: attachedDatabase.typeMapping
@@ -264,7 +262,7 @@ class $AuthenticationTableTable extends AuthenticationTable
 
 class AuthenticationTableData extends DataClass
     implements Insertable<AuthenticationTableData> {
-  final int id;
+  final String id;
   final String firstName;
   final double latitude;
   final double longitude;
@@ -296,7 +294,7 @@ class AuthenticationTableData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['first_name'] = Variable<String>(firstName);
     map['latitude'] = Variable<double>(latitude);
     map['longitude'] = Variable<double>(longitude);
@@ -336,7 +334,7 @@ class AuthenticationTableData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AuthenticationTableData(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       firstName: serializer.fromJson<String>(json['firstName']),
       latitude: serializer.fromJson<double>(json['latitude']),
       longitude: serializer.fromJson<double>(json['longitude']),
@@ -356,7 +354,7 @@ class AuthenticationTableData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'firstName': serializer.toJson<String>(firstName),
       'latitude': serializer.toJson<double>(latitude),
       'longitude': serializer.toJson<double>(longitude),
@@ -374,7 +372,7 @@ class AuthenticationTableData extends DataClass
   }
 
   AuthenticationTableData copyWith(
-          {int? id,
+          {String? id,
           String? firstName,
           double? latitude,
           double? longitude,
@@ -487,7 +485,7 @@ class AuthenticationTableData extends DataClass
 
 class AuthenticationTableCompanion
     extends UpdateCompanion<AuthenticationTableData> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String> firstName;
   final Value<double> latitude;
   final Value<double> longitude;
@@ -501,6 +499,7 @@ class AuthenticationTableCompanion
   final Value<String> email;
   final Value<String> password;
   final Value<DateTime> createdAt;
+  final Value<int> rowid;
   const AuthenticationTableCompanion({
     this.id = const Value.absent(),
     this.firstName = const Value.absent(),
@@ -516,9 +515,10 @@ class AuthenticationTableCompanion
     this.email = const Value.absent(),
     this.password = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   AuthenticationTableCompanion.insert({
-    this.id = const Value.absent(),
+    required String id,
     required String firstName,
     required double latitude,
     required double longitude,
@@ -532,7 +532,9 @@ class AuthenticationTableCompanion
     required String email,
     required String password,
     this.createdAt = const Value.absent(),
-  })  : firstName = Value(firstName),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        firstName = Value(firstName),
         latitude = Value(latitude),
         longitude = Value(longitude),
         address = Value(address),
@@ -545,7 +547,7 @@ class AuthenticationTableCompanion
         email = Value(email),
         password = Value(password);
   static Insertable<AuthenticationTableData> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? firstName,
     Expression<double>? latitude,
     Expression<double>? longitude,
@@ -559,6 +561,7 @@ class AuthenticationTableCompanion
     Expression<String>? email,
     Expression<String>? password,
     Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -575,11 +578,12 @@ class AuthenticationTableCompanion
       if (email != null) 'email': email,
       if (password != null) 'password': password,
       if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   AuthenticationTableCompanion copyWith(
-      {Value<int>? id,
+      {Value<String>? id,
       Value<String>? firstName,
       Value<double>? latitude,
       Value<double>? longitude,
@@ -592,7 +596,8 @@ class AuthenticationTableCompanion
       Value<String>? picture,
       Value<String>? email,
       Value<String>? password,
-      Value<DateTime>? createdAt}) {
+      Value<DateTime>? createdAt,
+      Value<int>? rowid}) {
     return AuthenticationTableCompanion(
       id: id ?? this.id,
       firstName: firstName ?? this.firstName,
@@ -608,6 +613,7 @@ class AuthenticationTableCompanion
       email: email ?? this.email,
       password: password ?? this.password,
       createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -615,7 +621,7 @@ class AuthenticationTableCompanion
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (firstName.present) {
       map['first_name'] = Variable<String>(firstName.value);
@@ -656,6 +662,9 @@ class AuthenticationTableCompanion
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -675,7 +684,8 @@ class AuthenticationTableCompanion
           ..write('picture: $picture, ')
           ..write('email: $email, ')
           ..write('password: $password, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -695,7 +705,7 @@ abstract class _$UserDatabase extends GeneratedDatabase {
 
 typedef $$AuthenticationTableTableCreateCompanionBuilder
     = AuthenticationTableCompanion Function({
-  Value<int> id,
+  required String id,
   required String firstName,
   required double latitude,
   required double longitude,
@@ -709,10 +719,11 @@ typedef $$AuthenticationTableTableCreateCompanionBuilder
   required String email,
   required String password,
   Value<DateTime> createdAt,
+  Value<int> rowid,
 });
 typedef $$AuthenticationTableTableUpdateCompanionBuilder
     = AuthenticationTableCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<String> firstName,
   Value<double> latitude,
   Value<double> longitude,
@@ -726,6 +737,7 @@ typedef $$AuthenticationTableTableUpdateCompanionBuilder
   Value<String> email,
   Value<String> password,
   Value<DateTime> createdAt,
+  Value<int> rowid,
 });
 
 class $$AuthenticationTableTableFilterComposer
@@ -737,7 +749,7 @@ class $$AuthenticationTableTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get firstName => $composableBuilder(
@@ -790,7 +802,7 @@ class $$AuthenticationTableTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get firstName => $composableBuilder(
@@ -843,7 +855,7 @@ class $$AuthenticationTableTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get firstName =>
@@ -916,7 +928,7 @@ class $$AuthenticationTableTableTableManager extends RootTableManager<
               $$AuthenticationTableTableAnnotationComposer(
                   $db: db, $table: table),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             Value<String> firstName = const Value.absent(),
             Value<double> latitude = const Value.absent(),
             Value<double> longitude = const Value.absent(),
@@ -930,6 +942,7 @@ class $$AuthenticationTableTableTableManager extends RootTableManager<
             Value<String> email = const Value.absent(),
             Value<String> password = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               AuthenticationTableCompanion(
             id: id,
@@ -946,9 +959,10 @@ class $$AuthenticationTableTableTableManager extends RootTableManager<
             email: email,
             password: password,
             createdAt: createdAt,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            required String id,
             required String firstName,
             required double latitude,
             required double longitude,
@@ -962,6 +976,7 @@ class $$AuthenticationTableTableTableManager extends RootTableManager<
             required String email,
             required String password,
             Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               AuthenticationTableCompanion.insert(
             id: id,
@@ -978,6 +993,7 @@ class $$AuthenticationTableTableTableManager extends RootTableManager<
             email: email,
             password: password,
             createdAt: createdAt,
+            rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

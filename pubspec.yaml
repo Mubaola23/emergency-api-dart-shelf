@@ -15,6 +15,7 @@ dependencies:
   path: ^1.9.0
   sqlite3: ^2.9.3
   mailer: ^6.5.0
+  uuid: ^4.5.1
 
 dev_dependencies:
   build_runner: ^2.9.0

@@ -3,21 +3,17 @@
 part of 'situation_report_database.dart';
 
 // ignore_for_file: type=lint
-class $SituationReportDatabaseTable extends SituationReportDatabase
-    with TableInfo<$SituationReportDatabaseTable, SituationReportDatabaseData> {
+class $SituationReportTableTable extends SituationReportTable
+    with TableInfo<$SituationReportTableTable, SituationReportTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $SituationReportDatabaseTable(this.attachedDatabase, [this._alias]);
+  $SituationReportTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
   @override
   late final GeneratedColumn<String> userId = GeneratedColumn<String>(
@@ -80,15 +76,17 @@ class $SituationReportDatabaseTable extends SituationReportDatabase
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'situation_report_database';
+  static const String $name = 'situation_report_table';
   @override
   VerificationContext validateIntegrity(
-      Insertable<SituationReportDatabaseData> instance,
+      Insertable<SituationReportTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('user_id')) {
       context.handle(_userIdMeta,
@@ -136,14 +134,14 @@ class $SituationReportDatabaseTable extends SituationReportDatabase
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
-  SituationReportDatabaseData map(Map<String, dynamic> data,
+  SituationReportTableData map(Map<String, dynamic> data,
       {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return SituationReportDatabaseData(
+    return SituationReportTableData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       userId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}user_id'])!,
       type: attachedDatabase.typeMapping
@@ -164,14 +162,14 @@ class $SituationReportDatabaseTable extends SituationReportDatabase
   }
 
   @override
-  $SituationReportDatabaseTable createAlias(String alias) {
-    return $SituationReportDatabaseTable(attachedDatabase, alias);
+  $SituationReportTableTable createAlias(String alias) {
+    return $SituationReportTableTable(attachedDatabase, alias);
   }
 }
 
-class SituationReportDatabaseData extends DataClass
-    implements Insertable<SituationReportDatabaseData> {
-  final int id;
+class SituationReportTableData extends DataClass
+    implements Insertable<SituationReportTableData> {
+  final String id;
   final String userId;
   final String type;
   final double? latitude;
@@ -180,7 +178,7 @@ class SituationReportDatabaseData extends DataClass
   final String agency;
   final String status;
   final DateTime createdAt;
-  const SituationReportDatabaseData(
+  const SituationReportTableData(
       {required this.id,
       required this.userId,
       required this.type,
@@ -193,7 +191,7 @@ class SituationReportDatabaseData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['user_id'] = Variable<String>(userId);
     map['type'] = Variable<String>(type);
     if (!nullToAbsent || latitude != null) {
@@ -209,8 +207,8 @@ class SituationReportDatabaseData extends DataClass
     return map;
   }
 
-  SituationReportDatabaseCompanion toCompanion(bool nullToAbsent) {
-    return SituationReportDatabaseCompanion(
+  SituationReportTableCompanion toCompanion(bool nullToAbsent) {
+    return SituationReportTableCompanion(
       id: Value(id),
       userId: Value(userId),
       type: Value(type),
@@ -227,11 +225,11 @@ class SituationReportDatabaseData extends DataClass
     );
   }
 
-  factory SituationReportDatabaseData.fromJson(Map<String, dynamic> json,
+  factory SituationReportTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return SituationReportDatabaseData(
-      id: serializer.fromJson<int>(json['id']),
+    return SituationReportTableData(
+      id: serializer.fromJson<String>(json['id']),
       userId: serializer.fromJson<String>(json['userId']),
       type: serializer.fromJson<String>(json['type']),
       latitude: serializer.fromJson<double?>(json['latitude']),
@@ -246,7 +244,7 @@ class SituationReportDatabaseData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'userId': serializer.toJson<String>(userId),
       'type': serializer.toJson<String>(type),
       'latitude': serializer.toJson<double?>(latitude),
@@ -258,8 +256,8 @@ class SituationReportDatabaseData extends DataClass
     };
   }
 
-  SituationReportDatabaseData copyWith(
-          {int? id,
+  SituationReportTableData copyWith(
+          {String? id,
           String? userId,
           String? type,
           Value<double?> latitude = const Value.absent(),
@@ -268,7 +266,7 @@ class SituationReportDatabaseData extends DataClass
           String? agency,
           String? status,
           DateTime? createdAt}) =>
-      SituationReportDatabaseData(
+      SituationReportTableData(
         id: id ?? this.id,
         userId: userId ?? this.userId,
         type: type ?? this.type,
@@ -279,9 +277,9 @@ class SituationReportDatabaseData extends DataClass
         status: status ?? this.status,
         createdAt: createdAt ?? this.createdAt,
       );
-  SituationReportDatabaseData copyWithCompanion(
-      SituationReportDatabaseCompanion data) {
-    return SituationReportDatabaseData(
+  SituationReportTableData copyWithCompanion(
+      SituationReportTableCompanion data) {
+    return SituationReportTableData(
       id: data.id.present ? data.id.value : this.id,
       userId: data.userId.present ? data.userId.value : this.userId,
       type: data.type.present ? data.type.value : this.type,
@@ -296,7 +294,7 @@ class SituationReportDatabaseData extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('SituationReportDatabaseData(')
+    return (StringBuffer('SituationReportTableData(')
           ..write('id: $id, ')
           ..write('userId: $userId, ')
           ..write('type: $type, ')
@@ -316,7 +314,7 @@ class SituationReportDatabaseData extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is SituationReportDatabaseData &&
+      (other is SituationReportTableData &&
           other.id == this.id &&
           other.userId == this.userId &&
           other.type == this.type &&
@@ -328,9 +326,9 @@ class SituationReportDatabaseData extends DataClass
           other.createdAt == this.createdAt);
 }
 
-class SituationReportDatabaseCompanion
-    extends UpdateCompanion<SituationReportDatabaseData> {
-  final Value<int> id;
+class SituationReportTableCompanion
+    extends UpdateCompanion<SituationReportTableData> {
+  final Value<String> id;
   final Value<String> userId;
   final Value<String> type;
   final Value<double?> latitude;
@@ -339,7 +337,8 @@ class SituationReportDatabaseCompanion
   final Value<String> agency;
   final Value<String> status;
   final Value<DateTime> createdAt;
-  const SituationReportDatabaseCompanion({
+  final Value<int> rowid;
+  const SituationReportTableCompanion({
     this.id = const Value.absent(),
     this.userId = const Value.absent(),
     this.type = const Value.absent(),
@@ -349,9 +348,10 @@ class SituationReportDatabaseCompanion
     this.agency = const Value.absent(),
     this.status = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
-  SituationReportDatabaseCompanion.insert({
-    this.id = const Value.absent(),
+  SituationReportTableCompanion.insert({
+    required String id,
     required String userId,
     required String type,
     this.latitude = const Value.absent(),
@@ -360,13 +360,15 @@ class SituationReportDatabaseCompanion
     required String agency,
     required String status,
     this.createdAt = const Value.absent(),
-  })  : userId = Value(userId),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        userId = Value(userId),
         type = Value(type),
         address = Value(address),
         agency = Value(agency),
         status = Value(status);
-  static Insertable<SituationReportDatabaseData> custom({
-    Expression<int>? id,
+  static Insertable<SituationReportTableData> custom({
+    Expression<String>? id,
     Expression<String>? userId,
     Expression<String>? type,
     Expression<double>? latitude,
@@ -375,6 +377,7 @@ class SituationReportDatabaseCompanion
     Expression<String>? agency,
     Expression<String>? status,
     Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -386,11 +389,12 @@ class SituationReportDatabaseCompanion
       if (agency != null) 'agency': agency,
       if (status != null) 'status': status,
       if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
-  SituationReportDatabaseCompanion copyWith(
-      {Value<int>? id,
+  SituationReportTableCompanion copyWith(
+      {Value<String>? id,
       Value<String>? userId,
       Value<String>? type,
       Value<double?>? latitude,
@@ -398,8 +402,9 @@ class SituationReportDatabaseCompanion
       Value<String>? address,
       Value<String>? agency,
       Value<String>? status,
-      Value<DateTime>? createdAt}) {
-    return SituationReportDatabaseCompanion(
+      Value<DateTime>? createdAt,
+      Value<int>? rowid}) {
+    return SituationReportTableCompanion(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       type: type ?? this.type,
@@ -409,6 +414,7 @@ class SituationReportDatabaseCompanion
       agency: agency ?? this.agency,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -416,7 +422,7 @@ class SituationReportDatabaseCompanion
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (userId.present) {
       map['user_id'] = Variable<String>(userId.value);
@@ -442,12 +448,15 @@ class SituationReportDatabaseCompanion
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('SituationReportDatabaseCompanion(')
+    return (StringBuffer('SituationReportTableCompanion(')
           ..write('id: $id, ')
           ..write('userId: $userId, ')
           ..write('type: $type, ')
@@ -456,7 +465,8 @@ class SituationReportDatabaseCompanion
           ..write('address: $address, ')
           ..write('agency: $agency, ')
           ..write('status: $status, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -465,18 +475,18 @@ class SituationReportDatabaseCompanion
 abstract class _$SituationDatabase extends GeneratedDatabase {
   _$SituationDatabase(QueryExecutor e) : super(e);
   $SituationDatabaseManager get managers => $SituationDatabaseManager(this);
-  late final $SituationReportDatabaseTable situationReportDatabase =
-      $SituationReportDatabaseTable(this);
+  late final $SituationReportTableTable situationReportTable =
+      $SituationReportTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [situationReportDatabase];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [situationReportTable];
 }
 
-typedef $$SituationReportDatabaseTableCreateCompanionBuilder
-    = SituationReportDatabaseCompanion Function({
-  Value<int> id,
+typedef $$SituationReportTableTableCreateCompanionBuilder
+    = SituationReportTableCompanion Function({
+  required String id,
   required String userId,
   required String type,
   Value<double?> latitude,
@@ -485,10 +495,11 @@ typedef $$SituationReportDatabaseTableCreateCompanionBuilder
   required String agency,
   required String status,
   Value<DateTime> createdAt,
+  Value<int> rowid,
 });
-typedef $$SituationReportDatabaseTableUpdateCompanionBuilder
-    = SituationReportDatabaseCompanion Function({
-  Value<int> id,
+typedef $$SituationReportTableTableUpdateCompanionBuilder
+    = SituationReportTableCompanion Function({
+  Value<String> id,
   Value<String> userId,
   Value<String> type,
   Value<double?> latitude,
@@ -497,18 +508,19 @@ typedef $$SituationReportDatabaseTableUpdateCompanionBuilder
   Value<String> agency,
   Value<String> status,
   Value<DateTime> createdAt,
+  Value<int> rowid,
 });
 
-class $$SituationReportDatabaseTableFilterComposer
-    extends Composer<_$SituationDatabase, $SituationReportDatabaseTable> {
-  $$SituationReportDatabaseTableFilterComposer({
+class $$SituationReportTableTableFilterComposer
+    extends Composer<_$SituationDatabase, $SituationReportTableTable> {
+  $$SituationReportTableTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get userId => $composableBuilder(
@@ -536,16 +548,16 @@ class $$SituationReportDatabaseTableFilterComposer
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
 }
 
-class $$SituationReportDatabaseTableOrderingComposer
-    extends Composer<_$SituationDatabase, $SituationReportDatabaseTable> {
-  $$SituationReportDatabaseTableOrderingComposer({
+class $$SituationReportTableTableOrderingComposer
+    extends Composer<_$SituationDatabase, $SituationReportTableTable> {
+  $$SituationReportTableTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get userId => $composableBuilder(
@@ -573,16 +585,16 @@ class $$SituationReportDatabaseTableOrderingComposer
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 }
 
-class $$SituationReportDatabaseTableAnnotationComposer
-    extends Composer<_$SituationDatabase, $SituationReportDatabaseTable> {
-  $$SituationReportDatabaseTableAnnotationComposer({
+class $$SituationReportTableTableAnnotationComposer
+    extends Composer<_$SituationDatabase, $SituationReportTableTable> {
+  $$SituationReportTableTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get userId =>
@@ -610,38 +622,37 @@ class $$SituationReportDatabaseTableAnnotationComposer
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 }
 
-class $$SituationReportDatabaseTableTableManager extends RootTableManager<
+class $$SituationReportTableTableTableManager extends RootTableManager<
     _$SituationDatabase,
-    $SituationReportDatabaseTable,
-    SituationReportDatabaseData,
-    $$SituationReportDatabaseTableFilterComposer,
-    $$SituationReportDatabaseTableOrderingComposer,
-    $$SituationReportDatabaseTableAnnotationComposer,
-    $$SituationReportDatabaseTableCreateCompanionBuilder,
-    $$SituationReportDatabaseTableUpdateCompanionBuilder,
+    $SituationReportTableTable,
+    SituationReportTableData,
+    $$SituationReportTableTableFilterComposer,
+    $$SituationReportTableTableOrderingComposer,
+    $$SituationReportTableTableAnnotationComposer,
+    $$SituationReportTableTableCreateCompanionBuilder,
+    $$SituationReportTableTableUpdateCompanionBuilder,
     (
-      SituationReportDatabaseData,
-      BaseReferences<_$SituationDatabase, $SituationReportDatabaseTable,
-          SituationReportDatabaseData>
+      SituationReportTableData,
+      BaseReferences<_$SituationDatabase, $SituationReportTableTable,
+          SituationReportTableData>
     ),
-    SituationReportDatabaseData,
+    SituationReportTableData,
     PrefetchHooks Function()> {
-  $$SituationReportDatabaseTableTableManager(
-      _$SituationDatabase db, $SituationReportDatabaseTable table)
+  $$SituationReportTableTableTableManager(
+      _$SituationDatabase db, $SituationReportTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$SituationReportDatabaseTableFilterComposer(
-                  $db: db, $table: table),
+              $$SituationReportTableTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$SituationReportDatabaseTableOrderingComposer(
+              $$SituationReportTableTableOrderingComposer(
                   $db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$SituationReportDatabaseTableAnnotationComposer(
+              $$SituationReportTableTableAnnotationComposer(
                   $db: db, $table: table),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             Value<String> userId = const Value.absent(),
             Value<String> type = const Value.absent(),
             Value<double?> latitude = const Value.absent(),
@@ -650,8 +661,9 @@ class $$SituationReportDatabaseTableTableManager extends RootTableManager<
             Value<String> agency = const Value.absent(),
             Value<String> status = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
-              SituationReportDatabaseCompanion(
+              SituationReportTableCompanion(
             id: id,
             userId: userId,
             type: type,
@@ -661,9 +673,10 @@ class $$SituationReportDatabaseTableTableManager extends RootTableManager<
             agency: agency,
             status: status,
             createdAt: createdAt,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            required String id,
             required String userId,
             required String type,
             Value<double?> latitude = const Value.absent(),
@@ -672,8 +685,9 @@ class $$SituationReportDatabaseTableTableManager extends RootTableManager<
             required String agency,
             required String status,
             Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
-              SituationReportDatabaseCompanion.insert(
+              SituationReportTableCompanion.insert(
             id: id,
             userId: userId,
             type: type,
@@ -683,6 +697,7 @@ class $$SituationReportDatabaseTableTableManager extends RootTableManager<
             agency: agency,
             status: status,
             createdAt: createdAt,
+            rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -691,28 +706,27 @@ class $$SituationReportDatabaseTableTableManager extends RootTableManager<
         ));
 }
 
-typedef $$SituationReportDatabaseTableProcessedTableManager
+typedef $$SituationReportTableTableProcessedTableManager
     = ProcessedTableManager<
         _$SituationDatabase,
-        $SituationReportDatabaseTable,
-        SituationReportDatabaseData,
-        $$SituationReportDatabaseTableFilterComposer,
-        $$SituationReportDatabaseTableOrderingComposer,
-        $$SituationReportDatabaseTableAnnotationComposer,
-        $$SituationReportDatabaseTableCreateCompanionBuilder,
-        $$SituationReportDatabaseTableUpdateCompanionBuilder,
+        $SituationReportTableTable,
+        SituationReportTableData,
+        $$SituationReportTableTableFilterComposer,
+        $$SituationReportTableTableOrderingComposer,
+        $$SituationReportTableTableAnnotationComposer,
+        $$SituationReportTableTableCreateCompanionBuilder,
+        $$SituationReportTableTableUpdateCompanionBuilder,
         (
-          SituationReportDatabaseData,
-          BaseReferences<_$SituationDatabase, $SituationReportDatabaseTable,
-              SituationReportDatabaseData>
+          SituationReportTableData,
+          BaseReferences<_$SituationDatabase, $SituationReportTableTable,
+              SituationReportTableData>
         ),
-        SituationReportDatabaseData,
+        SituationReportTableData,
         PrefetchHooks Function()>;
 
 class $SituationDatabaseManager {
   final _$SituationDatabase _db;
   $SituationDatabaseManager(this._db);
-  $$SituationReportDatabaseTableTableManager get situationReportDatabase =>
-      $$SituationReportDatabaseTableTableManager(
-          _db, _db.situationReportDatabase);
+  $$SituationReportTableTableTableManager get situationReportTable =>
+      $$SituationReportTableTableTableManager(_db, _db.situationReportTable);
 }

@@ -4,30 +4,28 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:sqlite3/sqlite3.dart';
 
-part 'situation_report_database.g.dart';
+part 'agency_database.g.dart';
 
-class SituationReportTable extends Table {
+class AgencyTable extends Table {
   TextColumn get id => text()();
-  TextColumn get userId => text()();
+  TextColumn get name => text()();
 
-  TextColumn get type => text()();
-  RealColumn get latitude => real().nullable()();
+  TextColumn get phoneNumber => text()();
+  TextColumn get emailAddress => text()();
   RealColumn get longitude => real().nullable()();
+  RealColumn get latitude => real().nullable()();
   TextColumn get address => text()();
-
-  TextColumn get agency => text()();
-  TextColumn get status => text()(); // submitted | ongoing | resolved
 
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
-@DriftDatabase(tables: [SituationReportTable])
-class SituationDatabase extends _$SituationDatabase {
+@DriftDatabase(tables: [AgencyTable])
+class AgencyDatabase extends _$AgencyDatabase {
   // dart run build_runner build
   // After generating code, this class needs to define a `schemaVersion` getter
   // and a constructor telling drift where the database should be stored.
   // These are described in the getting started guide: https://drift.simonbinder.eu/setup/
-  SituationDatabase([QueryExecutor? executor])
+  AgencyDatabase([QueryExecutor? executor])
       : super(executor ?? _openConnection());
 
   @override

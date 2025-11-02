@@ -9,6 +9,7 @@ import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:drift/drift.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
+import 'package:uuid/uuid.dart';
 
 final _db = UserDatabase();
 
@@ -129,7 +130,7 @@ class AuthRoute {
         final token = (100000 + Random().nextInt(900000)).toString();
         // Create new user record
         final newUser = AuthenticationTableCompanion(
-            id: Value(DateTime.now().millisecondsSinceEpoch),
+            id: Value(const Uuid().v4()),
             firstName: Value(firstName),
             lastName: Value(lastName),
             email: Value(email.toLowerCase()),
