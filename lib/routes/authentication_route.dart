@@ -213,8 +213,7 @@ class AuthRoute {
 
         final jwt = JWT({'id': user.id.toString()});
         final secret = SecretKey(
-          Platform.environment['JWT_SECRET_KEY'] ??
-              String.fromEnvironment('JWT_SECRET_KEY'),
+          Platform.environment['JWT_SECRET_KEY'] ?? '',
         );
         final token = jwt.sign(secret, expiresIn: Duration(hours: 1));
 

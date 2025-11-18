@@ -12,7 +12,7 @@ class AgencyRoute {
   static Router get router {
     final router = Router();
 
-    router.post('/agency/add', (Request request) async {
+    router.post('/api/agency/add', (Request request) async {
       try {
         final Map<String, dynamic> params;
         final body = await request.readAsString();
@@ -122,7 +122,7 @@ class AgencyRoute {
       }
     });
 
-    router.post('/agency/update', (Request request) async {
+    router.post('/api/agency/update', (Request request) async {
       try {
         final Map<String, dynamic> params;
         final body = await request.readAsString();

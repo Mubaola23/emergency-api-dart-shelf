@@ -15,7 +15,7 @@ class SituationReportRoute {
   static Router get router {
     final router = Router();
 
-    router.post('/emergency/report', (Request request) async {
+    router.post('/api/emergency/report', (Request request) async {
       try {
         final Map<String, dynamic> params;
         final body = await request.readAsString();
@@ -138,7 +138,7 @@ class SituationReportRoute {
       }
     });
 
-    router.post('/emergency/update-report', (Request request) async {
+    router.post('/api/emergency/update-report', (Request request) async {
       try {
         final Map<String, dynamic> params;
         final body = await request.readAsString();
